@@ -23,10 +23,10 @@ fun App() {
         Chat.flow(this).collect { messageList += it }
     }
     LaunchedEffect(Unit) {
-        delay(10000L)
+        delay(1000L)
         HttpClient {
             install(WebSockets)
-        }.webSocket(path = "/chat", host = "127.0.0.1", port = 8080) {
+        }.webSocket(path = "/chat", host = "192.168.1.161", port = 8080) {
             coroutineScope { sendFlag.collect { send(Frame.Text(message.value)) } }
         }
     }

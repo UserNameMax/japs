@@ -27,8 +27,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-websockets:2.3.4")
 
                 //ktor server
-                api("io.ktor:ktor-server-core-jvm:2.3.4")
-                api("io.ktor:ktor-server-netty-jvm:2.3.4")
+                api("io.ktor:ktor-server-core:2.3.4")
+                //api("io.ktor:ktor-server-netty:2.3.4")
+                api("io.ktor:ktor-server-cio:2.3.4")
                 api("io.ktor:ktor-server-websockets:2.3.4")
             }
         }
