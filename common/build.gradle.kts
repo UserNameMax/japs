@@ -3,7 +3,7 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
     id("com.android.library")
-
+    //id("io.ktor.plugin")
 }
 
 group = "ru.mishenko.maksim"
@@ -20,11 +20,23 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.material)
+
+                //ktor client
+                api("io.ktor:ktor-client-core:2.3.4")
+                api("io.ktor:ktor-client-cio:2.3.4")
+                implementation("io.ktor:ktor-client-websockets:2.3.4")
+
+                //ktor server
+                api("io.ktor:ktor-server-core-jvm:2.3.4")
+                api("io.ktor:ktor-server-netty-jvm:2.3.4")
+                api("io.ktor:ktor-server-websockets:2.3.4")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+
+                //testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
             }
         }
         val androidMain by getting {
