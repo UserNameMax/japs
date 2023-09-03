@@ -1,5 +1,6 @@
 package ru.mishenko.maksim.common
 
-actual fun getPlatformName(): String {
-    return "Desktop"
-}
+import ru.mishenko.maksim.common.domain.MyUnit
+import ru.mishenko.maksim.common.domain.Server
+
+actual fun getUnit(): MyUnit = Server

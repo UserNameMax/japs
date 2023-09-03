@@ -1,5 +1,6 @@
 package ru.mishenko.maksim.common
 
-actual fun getPlatformName(): String {
-    return "Android"
-}
+import ru.mishenko.maksim.common.domain.Client
+import ru.mishenko.maksim.common.domain.MyUnit
+
+actual fun getUnit(): MyUnit = Client

@@ -1,3 +1,5 @@
 package ru.mishenko.maksim.common
 
-expect fun getPlatformName(): String
+import ru.mishenko.maksim.common.domain.MyUnit
+
+expect fun getUnit(): MyUnit

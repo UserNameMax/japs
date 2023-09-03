@@ -6,29 +6,19 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
-import io.ktor.client.*
-import io.ktor.client.plugins.websocket.*
-import io.ktor.websocket.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun App() {
     var messageList by remember { mutableStateOf(listOf<String>()) }
     val message = remember { mutableStateOf("") }
-    val sendFlag = remember { MutableStateFlow(false) }
+    val unit = getUnit()
     LaunchedEffect(Unit) {
-        Chat.flow(this).collect { messageList += it }
-    }
-    LaunchedEffect(Unit) {
-        delay(1000L)
-        HttpClient {
-            install(WebSockets)
-        }.webSocket(path = "/chat", host = "192.168.1.161", port = 8080) {
-            coroutineScope { sendFlag.collect { send(Frame.Text(message.value)) } }
+        launch {
+            unit.startWebSocket()
         }
+        CurrentChat.flow(this).collect { messageList += it }
     }
     Column {
         Column {
@@ -36,7 +26,7 @@ fun App() {
         }
         Row {
             TextField(value = message.value, onValueChange = { message.value = it })
-            Button(onClick = { sendFlag.update { !it } }) { Text("send") }
+            Button(onClick = { runBlocking { unit.sendMessage(message.value) } }) { Text("send") }
         }
     }
 
