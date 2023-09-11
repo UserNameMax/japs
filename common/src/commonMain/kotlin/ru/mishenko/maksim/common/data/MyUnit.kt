@@ -1,4 +1,4 @@
-package ru.mishenko.maksim.common.domain
+package ru.mishenko.maksim.common.data
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

@@ -6,19 +6,17 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import ru.mishenko.maksim.common.domain.MessageController
 
 @Composable
 fun App() {
     var messageList by remember { mutableStateOf(listOf<String>()) }
     val message = remember { mutableStateOf("") }
-    val unit = getUnit()
+    val scope = rememberCoroutineScope()
+    val useCase by remember { mutableStateOf(MessageController.builder.setServerMode().setScope(scope).build()) }
     LaunchedEffect(Unit) {
-        launch {
-            unit.startWebSocket()
-        }
-        CurrentChat.flow(this).collect { messageList += it }
+        useCase.flow(this).collect { messageList += it }
     }
     Column {
         Column {
@@ -26,7 +24,7 @@ fun App() {
         }
         Row {
             TextField(value = message.value, onValueChange = { message.value = it })
-            Button(onClick = { runBlocking { unit.sendMessage(message.value) } }) { Text("send") }
+            Button(onClick = { runBlocking { useCase.sendMessage(message.value) } }) { Text("send") }
         }
     }
 

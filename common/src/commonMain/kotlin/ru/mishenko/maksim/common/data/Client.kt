@@ -1,4 +1,4 @@
-package ru.mishenko.maksim.common.domain
+package ru.mishenko.maksim.common.data
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -8,9 +8,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
-import ru.mishenko.maksim.common.CurrentChat
+import ru.mishenko.maksim.common.domain.HistoryController
 
-object Client : MyUnit {
+class Client(private val historyController: HistoryController) : MyUnit {
     var session: ClientWebSocketSession? = null
     val ktorClient = HttpClient(CIO) {
         install(WebSockets)
@@ -18,12 +18,12 @@ object Client : MyUnit {
 
     override suspend fun startWebSocket() {
         ktorClient.webSocket(path = "/chat", host = "192.168.1.161", port = 8080) {
-            CurrentChat.emit("New connection")
+            historyController.emit("New connection")
             session = this
             for (frame in incoming) {
                 with(frame as? Frame.Text) {
                     if (this != null)
-                        CurrentChat.emit(readText())
+                        historyController.emit(readText())
                 }
             }
         }

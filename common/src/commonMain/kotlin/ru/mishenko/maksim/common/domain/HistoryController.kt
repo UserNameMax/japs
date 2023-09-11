@@ -1,11 +1,9 @@
-package ru.mishenko.maksim.common
+package ru.mishenko.maksim.common.domain
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
-open class Chat {
+class HistoryController {
     private data class Element(val message: String, val number: Int)
 
     private val mutableLastMessage = MutableStateFlow(Element("", 0))
@@ -18,16 +16,4 @@ open class Chat {
     ).mapNotNull {
         if (it.number > 0) it.message else null
     }
-
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            mutableLastMessage.collect {
-                log(it.message)
-            }
-        }
-    }
 }
-
-expect fun log(message: String)
-
-object CurrentChat : Chat()
