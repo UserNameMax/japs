@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.parcelable.Parcelable
+import com.arkivanov.essenty.parcelable.Parcelize
 import ru.mishenko.maksim.common.ui.chat.ChatComponent
 import ru.mishenko.maksim.common.ui.clientSettings.ClientSettingsComponent
 import ru.mishenko.maksim.common.ui.selectMode.SelectModeComponent
@@ -50,9 +51,13 @@ class Root(componentContext: ComponentContext) : Component, ComponentContext by 
     }
 
     sealed class ScreenConfig : Parcelable {
+        @Parcelize
         object SelectMode : ScreenConfig()
+        @Parcelize
         object ServerSettings : ScreenConfig()
+        @Parcelize
         object ClientSetting : ScreenConfig()
+        @Parcelize
         object Chat : ScreenConfig()
     }
 

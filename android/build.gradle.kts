@@ -14,6 +14,10 @@ repositories {
 dependencies {
     api(project(":common"))
     implementation("androidx.activity:activity-compose:1.5.0")
+
+    //decompose
+    implementation("com.arkivanov.decompose:decompose:2.0.2")
+    implementation("com.arkivanov.decompose:extensions-android:2.0.2")
 }
 
 android {
