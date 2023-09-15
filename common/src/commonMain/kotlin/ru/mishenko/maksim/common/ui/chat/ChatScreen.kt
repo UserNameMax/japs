@@ -11,7 +11,7 @@ import ru.mishenko.maksim.common.domain.MessageController
 import ru.mishenko.maksim.common.setServerMode
 
 @Composable
-fun ChatScreen(){
+fun ChatScreen(onBack: () -> Unit) {
     var messageList by remember { mutableStateOf(listOf<String>()) }
     val message = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -27,5 +27,6 @@ fun ChatScreen(){
             TextField(value = message.value, onValueChange = { message.value = it })
             Button(onClick = { runBlocking { useCase.sendMessage(message.value) } }) { Text("send") }
         }
+        Button(onClick = onBack) { Text("Back") }
     }
 }

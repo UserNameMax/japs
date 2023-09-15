@@ -32,7 +32,8 @@ kotlin {
                 api("io.ktor:ktor-server-websockets:2.3.4")
 
                 //decompose
-                implementation("com.arkivanov.decompose:extensions-android:2.0.2")
+                implementation("com.arkivanov.decompose:decompose:2.0.2")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.2")
 
                 //mviKotlin
                 implementation( "com.arkivanov.mvikotlin:mvikotlin:3.2.1")

@@ -19,6 +19,10 @@ kotlin {
             dependencies {
                 api(project(":common"))
                 implementation(compose.desktop.currentOs)
+
+                //decompose
+                implementation("com.arkivanov.decompose:decompose:2.0.2")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.2")
             }
         }
         val jvmTest by getting

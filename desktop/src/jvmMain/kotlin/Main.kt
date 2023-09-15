@@ -1,20 +1,30 @@
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.singleWindowApplication
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import ru.mishenko.maksim.common.App
+import ru.mishenko.maksim.common.ui.root.Root
+import javax.swing.SwingUtilities
 
+@OptIn(ExperimentalDecomposeApi::class)
+fun main() {
+    val windowState = WindowState()
+    val lifecycle = LifecycleRegistry()
+    val root = runOnMainThreadBlocking { Root(DefaultComponentContext(lifecycle)) }
 
-fun main(args: Array<String>) {
-    application {
-        Window(
-            onCloseRequest = ::exitApplication,
-            state = rememberWindowState(
-                position = WindowPosition.Aligned(Alignment.Center)
-            )
-        ) {
-            App()
-        }
+    singleWindowApplication(
+        state = windowState,
+        title = "japs",
+    ) {
+        LifecycleController(lifecycle, windowState)
+        App(root)
     }
+}
+
+private inline fun <T : Any> runOnMainThreadBlocking(crossinline block: () -> T): T {
+    lateinit var result: T
+    SwingUtilities.invokeAndWait { result = block() }
+    return result
 }
