@@ -28,9 +28,14 @@ kotlin {
 
                 //ktor server
                 api("io.ktor:ktor-server-core:2.3.4")
-                //api("io.ktor:ktor-server-netty:2.3.4")
                 api("io.ktor:ktor-server-cio:2.3.4")
                 api("io.ktor:ktor-server-websockets:2.3.4")
+
+                //decompose
+                implementation("com.arkivanov.decompose:extensions-android:2.0.2")
+
+                //mviKotlin
+                implementation( "com.arkivanov.mvikotlin:mvikotlin:3.2.1")
             }
         }
         val commonTest by getting {

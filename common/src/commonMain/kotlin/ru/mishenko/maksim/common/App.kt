@@ -1,31 +1,9 @@
 package ru.mishenko.maksim.common
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.*
-import kotlinx.coroutines.runBlocking
-import ru.mishenko.maksim.common.domain.MessageController
+import androidx.compose.runtime.Composable
+import ru.mishenko.maksim.common.ui.root.RootScreen
 
 @Composable
 fun App() {
-    var messageList by remember { mutableStateOf(listOf<String>()) }
-    val message = remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-    val useCase by remember { mutableStateOf(MessageController.builder.setServerMode().setScope(scope).build()) }
-    LaunchedEffect(Unit) {
-        useCase.flow(this).collect { messageList += it }
-    }
-    Column {
-        Column {
-            messageList.forEach { Text(it) }
-        }
-        Row {
-            TextField(value = message.value, onValueChange = { message.value = it })
-            Button(onClick = { runBlocking { useCase.sendMessage(message.value) } }) { Text("send") }
-        }
-    }
-
+    RootScreen()
 }
