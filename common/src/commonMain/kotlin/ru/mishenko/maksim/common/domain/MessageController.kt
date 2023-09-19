@@ -28,22 +28,34 @@ class MessageController(
         fun setClient(): Builder
         fun setScope(scope: CoroutineScope): Builder
         fun setHistoryController(history: HistoryController): Builder
+        fun setServerIp(ip: String): Builder
         fun build(): MessageController
     }
 
     companion object {
-
-
         val builder = object : Builder {
             private var isServer = true
             private var scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
             private var history = HistoryController()
+            private var serverIp = "192.168.1.161"
 
             override fun setServer() = this.apply { isServer = true }
             override fun setClient() = this.apply { isServer = false }
             override fun setScope(scope: CoroutineScope) = this.apply { this.scope = scope }
             override fun setHistoryController(history: HistoryController) = this.apply { this.history = history }
-            override fun build() = MessageController(scope, history, if (isServer) Server(history) else Client(history))
+            override fun setServerIp(ip: String) = this.apply { serverIp = ip }
+            override fun build() = MessageController(
+                scope = scope,
+                history = history,
+                unit =
+                if (isServer)
+                    Server(historyController = history)
+                else
+                    Client(
+                        historyController = history,
+                        serverIp = serverIp
+                    )
+            )
         }
     }
 }

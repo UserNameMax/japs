@@ -16,7 +16,7 @@ class ServerSettingsComponent(
     private val onChat: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
-    val store = ServerSettingsStoreFactory(DefaultStoreFactory()).create()
+    private val store = ServerSettingsStoreFactory(DefaultStoreFactory()).create()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Composable

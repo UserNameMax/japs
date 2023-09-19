@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import ru.mishenko.maksim.common.domain.HistoryController
 
-class Client(private val historyController: HistoryController) : MyUnit {
+class Client(private val historyController: HistoryController, private val serverIp: String) : MyUnit {
     var session: ClientWebSocketSession? = null
     val ktorClient = HttpClient(CIO) {
         install(WebSockets)
     }
 
     override suspend fun startWebSocket() {
-        ktorClient.webSocket(path = "/chat", host = "192.168.1.161", port = 8080) {
+        ktorClient.webSocket(path = "/chat", host = serverIp, port = 8080) {
             historyController.emit("New connection")
             session = this
             for (frame in incoming) {
