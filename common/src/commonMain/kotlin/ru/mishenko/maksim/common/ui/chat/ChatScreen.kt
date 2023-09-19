@@ -8,14 +8,13 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import kotlinx.coroutines.runBlocking
 import ru.mishenko.maksim.common.domain.MessageController
-import ru.mishenko.maksim.common.setServerMode
 
 @Composable
 fun ChatScreen(onBack: () -> Unit) {
     var messageList by remember { mutableStateOf(listOf<String>()) }
     val message = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    val useCase by remember { mutableStateOf(MessageController.builder.setServerMode().setScope(scope).build()) }
+    val useCase by remember { mutableStateOf(MessageController.builder.setScope(scope).build()) }
     LaunchedEffect(Unit) {
         useCase.flow(this).collect { messageList += it }
     }
