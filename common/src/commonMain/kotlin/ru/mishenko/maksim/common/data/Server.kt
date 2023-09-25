@@ -9,7 +9,9 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.Json
 import ru.mishenko.maksim.common.domain.HistoryController
+import ru.mishenko.maksim.common.domain.model.Message
 
 class Server(private val historyController: HistoryController) : MyUnit {
     private var session: WebSocketSession? = null
@@ -17,12 +19,12 @@ class Server(private val historyController: HistoryController) : MyUnit {
         install(WebSockets)
         routing {
             webSocket("/chat") {
-                historyController.emit("New connection")
+                //historyController.emit("New connection")
                 session = this
                 for (frame in incoming) {
                     with(frame as? Frame.Text) {
                         if (this != null)
-                            historyController.emit(readText())
+                            historyController.emit(Json.decodeFromString(readText()))
                     }
                 }
             }
@@ -33,9 +35,11 @@ class Server(private val historyController: HistoryController) : MyUnit {
         ktorServer.start()
     }
 
-    override suspend fun sendMessage(message: String) {
-        session?.send(Frame.Text(message))
+    override suspend fun sendMessage(message: Message) {
+        session?.send(Frame.Text(message.run {
+            Json.encodeToString(Message.serializer(),this)
+        }))
     }
 
-    override fun messageFlow(scope: CoroutineScope): Flow<String> = flow {}
+    override fun messageFlow(scope: CoroutineScope): Flow<Message> = flow {}
 }

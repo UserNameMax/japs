@@ -16,4 +16,5 @@ plugins {
     id("com.android.library") apply false
     id("org.jetbrains.compose") apply false
     id("io.ktor.plugin") version "2.3.4"
+    kotlin("plugin.serialization") version "1.8.10"
 }

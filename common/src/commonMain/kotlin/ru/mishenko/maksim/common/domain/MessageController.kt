@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import ru.mishenko.maksim.common.data.Client
 import ru.mishenko.maksim.common.data.MyUnit
 import ru.mishenko.maksim.common.data.Server
+import ru.mishenko.maksim.common.domain.model.Message
 
 class MessageController(
     val scope: CoroutineScope,
@@ -16,7 +17,7 @@ class MessageController(
         scope.launch { unit.startWebSocket() }
     }
 
-    suspend fun sendMessage(message: String) {
+    suspend fun sendMessage(message: Message) {
         history.emit(message)
         unit.sendMessage(message)
     }

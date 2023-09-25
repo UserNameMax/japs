@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.compose")
     id("com.android.library")
     id("kotlin-parcelize")
-    //id("io.ktor.plugin")
+    kotlin("plugin.serialization")
 }
 
 group = "ru.mishenko.maksim"
@@ -44,11 +44,14 @@ kotlin {
                 implementation( "com.arkivanov.mvikotlin:mvikotlin:3.2.1")
                 implementation( "com.arkivanov.mvikotlin:mvikotlin-main:3.2.1")
                 implementation( "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:3.2.1")
+
+                //serialization
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                //implementation(kotlin("test"))
 
                 //testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
             }

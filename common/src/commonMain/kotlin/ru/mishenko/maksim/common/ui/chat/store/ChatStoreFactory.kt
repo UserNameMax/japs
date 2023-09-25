@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.mishenko.maksim.common.dispatcher
 import ru.mishenko.maksim.common.domain.MessageController
+import ru.mishenko.maksim.common.domain.model.Message.Companion.toMessage
 
 class ChatStoreFactory(private val storeFactory: StoreFactory) {
     private val messageController by lazy { MessageController.builder.build() }
@@ -27,7 +28,7 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
                     MessageController.builder.setScope(scope = this)
                     messageController.flow().collect { message ->
                         withContext(dispatcher()) {
-                            dispatch(Action.EmitMessage(message))
+                            dispatch(Action.EmitMessage(message.text))
                         }
                     }
                 }
@@ -50,7 +51,7 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
                 is ChatStore.Intent.OnInputMessage -> dispatch(Message.UpdateMessage(intent.message))
                 is ChatStore.Intent.OnSendMessage -> scope.launch(dispatcher()) {
                     val state = getState()
-                    messageController.sendMessage(state.message)
+                    messageController.sendMessage(state.message.toMessage())
                     dispatch(Message.UpdateMessage(""))
                 }
             }
