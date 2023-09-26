@@ -32,23 +32,31 @@ class MessageController(
     }
 
     fun flow(scope: CoroutineScope = this.scope) = history.flow(scope).mapNotNull {
-        when(it.type){
+        when (it.type) {
             MessageType.Connect -> {
                 unit.sendMessage(approveConnectMessage(++connectionCounter))
                 "New Connection".toMessage(author = "System")
             }
+
             MessageType.ApproveConnect -> {
                 unitId = it.id.toIntOrNull() ?: 0
                 "New Connection".toMessage(author = "System")
             }
+
             MessageType.Message -> {
-                val message = it.copy(type = MessageType.ApproveMessage)
-                unit.sendMessage(message)
-                message
+                if (unitId == it.unitId()) {
+                    it
+                } else {
+                    val message = it.run { if (unitId != this.unitId()) copy(type = MessageType.ApproveMessage) else this }
+                    unit.sendMessage(message)
+                    message
+                }
             }
+
             MessageType.ApproveMessage -> {
                 it
             }
+
             MessageType.Other -> null
         }
     }
@@ -60,7 +68,10 @@ class MessageController(
         type = MessageType.ApproveConnect
     )
 
-    private fun String.toMessage(author: String = "unit $unitId") = Message(id = "$unitId-${messageCounter++}", text = this, author = author, type = MessageType.Message)
+    private fun String.toMessage(author: String = "unit $unitId") =
+        Message(id = "$unitId-${messageCounter++}", text = this, author = author, type = MessageType.Message)
+
+    private fun Message.unitId(): Int = id.substringBefore('-').toIntOrNull() ?: 0
 
     interface Builder {
         fun setServer(): Builder

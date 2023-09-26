@@ -20,7 +20,7 @@ class ChatComponent(componentContext: ComponentContext, private val onBack: () -
     override fun render() {
         val state by store.stateFlow.collectAsState()
         ChatScreen(
-            messageList = state.messageHistory.map { "${it.author}: ${it.text}" },
+            messageList = state.messageHistory,
             inputValue = state.message,
             onInputValue = { message -> store.accept(ChatStore.Intent.OnInputMessage(message)) },
             onSend = { store.accept(ChatStore.Intent.OnSendMessage) },

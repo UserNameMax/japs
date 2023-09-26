@@ -26,18 +26,20 @@ class SelectModeStoreFactory(private val storeFactory: StoreFactory) {
             when (intent) {
 
                 SelectModeStore.Intent.OnTabSwitch -> {
-                    val switchValue = !getState().switchValue
+                    dispatch(Message.ChangeSwitchValue(!getState().switchValue))
+                }
+
+                SelectModeStore.Intent.OnClickButton -> {
+                    val switchValue = getState().switchValue
                     if (switchValue) {
                         MessageController.builder.setServer()
                     } else {
-                        MessageController.builder.setServer()
+                        MessageController.builder.setClient()
                     }
-                    dispatch(Message.ChangeSwitchValue(switchValue))
+                    publish(
+                        if (getState().switchValue) SelectModeStore.Label.SelectServerMode else SelectModeStore.Label.SelectClientMode
+                    )
                 }
-
-                SelectModeStore.Intent.OnClickButton -> publish(
-                    if (getState().switchValue) SelectModeStore.Label.SelectServerMode else SelectModeStore.Label.SelectClientMode
-                )
             }
     }
 

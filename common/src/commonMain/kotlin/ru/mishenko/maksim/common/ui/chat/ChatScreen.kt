@@ -2,27 +2,42 @@ package ru.mishenko.maksim.common.ui.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import ru.mishenko.maksim.common.domain.model.Message
 
 @Composable
 fun ChatScreen(
-    messageList: List<String>,
+    messageList: List<Message>,
     inputValue: String,
     onInputValue: (String) -> Unit,
     onSend: () -> Unit,
     onBack: () -> Unit
 ) {
     Column {
-        Column {
-            messageList.forEach { Text(it) }
+        TopBar(onBack = onBack)
+        Column(modifier = Modifier.fillMaxSize().weight(1f)) {
+            messageList.forEach { Text("${it.author}: ${it.text}") }
         }
         Row {
             TextField(value = inputValue, onValueChange = onInputValue)
             Button(onClick = onSend) { Text("send") }
         }
-        Button(onClick = onBack) { Text("Back") }
     }
+}
+
+@Composable
+fun TopBar(onBack: () -> Unit) {
+    TopAppBar(
+        title = { Text("Chat") },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = null)
+            }
+        },
+    )
 }
