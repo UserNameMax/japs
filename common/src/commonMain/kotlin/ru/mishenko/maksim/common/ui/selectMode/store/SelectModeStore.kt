@@ -4,8 +4,8 @@ import com.arkivanov.mvikotlin.core.store.Store
 
 interface SelectModeStore : Store<SelectModeStore.Intent, SelectModeStore.State, SelectModeStore.Label> {
     sealed interface Intent {
-        object OnSelectClientMode : Intent
-        object OnSelectServerMode : Intent
+        object OnTabSwitch : Intent
+        object OnClickButton : Intent
     }
 
     sealed interface Label {
@@ -13,5 +13,5 @@ interface SelectModeStore : Store<SelectModeStore.Intent, SelectModeStore.State,
         object SelectServerMode : Label
     }
 
-    object State
+    data class State(val switchValue: Boolean = false)
 }
