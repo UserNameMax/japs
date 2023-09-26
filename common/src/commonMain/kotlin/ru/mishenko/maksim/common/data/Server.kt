@@ -31,7 +31,7 @@ class Server(private val historyController: HistoryController) : MyUnit {
         }
     }
 
-    override suspend fun startWebSocket() {
+    override suspend fun startWebSocket(initMessage: Message) {
         ktorServer.start()
     }
 

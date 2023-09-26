@@ -1,6 +1,7 @@
 package ru.mishenko.maksim.common.ui.chat.store
 
 import com.arkivanov.mvikotlin.core.store.Store
+import ru.mishenko.maksim.common.domain.model.Message
 
 interface ChatStore : Store<ChatStore.Intent, ChatStore.State, Nothing> {
     sealed interface Intent {
@@ -8,5 +9,5 @@ interface ChatStore : Store<ChatStore.Intent, ChatStore.State, Nothing> {
         object OnSendMessage : Intent
     }
 
-    data class State(val message: String = "", val messageHistory: List<String> = listOf())
+    data class State(val message: String = "", val messageHistory: List<Message> = listOf())
 }

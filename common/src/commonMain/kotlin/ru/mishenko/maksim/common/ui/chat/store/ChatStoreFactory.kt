@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.mishenko.maksim.common.dispatcher
 import ru.mishenko.maksim.common.domain.MessageController
-import ru.mishenko.maksim.common.domain.model.Message.Companion.toMessage
+import ru.mishenko.maksim.common.domain.model.Message
 
 class ChatStoreFactory(private val storeFactory: StoreFactory) {
     private val messageController by lazy { MessageController.builder.build() }
@@ -28,7 +28,7 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
                     MessageController.builder.setScope(scope = this)
                     messageController.flow().collect { message ->
                         withContext(dispatcher()) {
-                            dispatch(Action.EmitMessage(message.text))
+                            dispatch(Action.EmitMessage(message))
                         }
                     }
                 }
@@ -36,23 +36,23 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
         ) {}
 
     sealed interface Action {
-        data class EmitMessage(val newMessage: String) : Action
+        data class EmitMessage(val newMessage: Message) : Action
     }
 
-    sealed interface Message {
-        data class UpdateMessage(val message: String) : Message
-        data class UpdateMessageList(val list: List<String>) : Message
+    sealed interface UiMessage {
+        data class UpdateMessage(val message: String) : UiMessage
+        data class UpdateMessageList(val list: List<Message>) : UiMessage
     }
 
     private inner class ExecutorImpl :
-        CoroutineExecutor<ChatStore.Intent, Action, ChatStore.State, Message, Nothing>() {
+        CoroutineExecutor<ChatStore.Intent, Action, ChatStore.State, UiMessage, Nothing>() {
         override fun executeIntent(intent: ChatStore.Intent, getState: () -> ChatStore.State) {
             when (intent) {
-                is ChatStore.Intent.OnInputMessage -> dispatch(Message.UpdateMessage(intent.message))
+                is ChatStore.Intent.OnInputMessage -> dispatch(UiMessage.UpdateMessage(intent.message))
                 is ChatStore.Intent.OnSendMessage -> scope.launch(dispatcher()) {
                     val state = getState()
-                    messageController.sendMessage(state.message.toMessage())
-                    dispatch(Message.UpdateMessage(""))
+                    messageController.sendMessage(state.message)
+                    dispatch(UiMessage.UpdateMessage(""))
                 }
             }
         }
@@ -61,17 +61,17 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
             when (action) {
                 is Action.EmitMessage -> scope.launch(dispatcher()) {
                     val state = getState()
-                    dispatch(Message.UpdateMessageList(list = state.messageHistory + action.newMessage))
+                    dispatch(UiMessage.UpdateMessageList(list = state.messageHistory.filter { it.id != action.newMessage.id } + action.newMessage))
                 }
             }
         }
     }
 
-    private object ReducerImpl : Reducer<ChatStore.State, Message> {
-        override fun ChatStore.State.reduce(msg: Message): ChatStore.State =
+    private object ReducerImpl : Reducer<ChatStore.State, UiMessage> {
+        override fun ChatStore.State.reduce(msg: UiMessage): ChatStore.State =
             when (msg) {
-                is Message.UpdateMessage -> copy(message = msg.message)
-                is Message.UpdateMessageList -> copy(messageHistory = msg.list)
+                is UiMessage.UpdateMessage -> copy(message = msg.message)
+                is UiMessage.UpdateMessageList -> copy(messageHistory = msg.list)
             }
     }
 }

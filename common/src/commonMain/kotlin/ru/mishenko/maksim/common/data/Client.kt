@@ -19,10 +19,10 @@ class Client(private val historyController: HistoryController, private val serve
         install(WebSockets)
     }
 
-    override suspend fun startWebSocket() {
+    override suspend fun startWebSocket(initMessage: Message) {
         ktorClient.webSocket(path = "/chat", host = serverIp, port = 8080) {
-            //historyController.emit("New connection")
             session = this
+            sendMessage(initMessage)
             for (frame in incoming) {
                 with(frame as? Frame.Text) {
                     if (this != null)
