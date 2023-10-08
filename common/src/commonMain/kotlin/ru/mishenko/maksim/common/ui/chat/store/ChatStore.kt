@@ -7,7 +7,8 @@ interface ChatStore : Store<ChatStore.Intent, ChatStore.State, Nothing> {
     sealed interface Intent {
         data class OnInputMessage(val message: String) : Intent
         object OnSendMessage : Intent
+        data class OnChangeName(val name: String): Intent
     }
 
-    data class State(val message: String = "", val messageHistory: List<Message> = listOf())
+    data class State(val name: String = "", val message: String = "", val messageHistory: List<Message> = listOf())
 }

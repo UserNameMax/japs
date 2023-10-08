@@ -15,9 +15,10 @@ class MessageController(
     private val history: HistoryController,
     private val unit: MyUnit
 ) {
-    var unitId: Int = 0
-    var connectionCounter: Int = 0
-    var messageCounter: Long = 0
+    private var unitId: Int = 0
+    private var connectionCounter: Int = 0
+    private var messageCounter: Long = 0
+    var name: String = "Default Name"
 
     init {
         scope.launch {
@@ -68,7 +69,7 @@ class MessageController(
         type = MessageType.ApproveConnect
     )
 
-    private fun String.toMessage(author: String = "unit $unitId") =
+    private fun String.toMessage(author: String = name) =
         Message(id = "$unitId-${messageCounter++}", text = this, author = author, type = MessageType.Message)
 
     private fun Message.unitId(): Int = id.substringBefore('-').toIntOrNull() ?: 0

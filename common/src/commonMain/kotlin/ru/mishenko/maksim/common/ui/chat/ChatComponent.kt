@@ -23,8 +23,10 @@ class ChatComponent(componentContext: ComponentContext, private val onBack: () -
             messageList = state.messageHistory,
             inputValue = state.message,
             onInputValue = { message -> store.accept(ChatStore.Intent.OnInputMessage(message)) },
+            name = state.name,
             onSend = { store.accept(ChatStore.Intent.OnSendMessage) },
-            onBack = onBack
+            onBack = onBack,
+            onChangeName = { store.accept(ChatStore.Intent.OnChangeName(it)) }
         )
     }
 }

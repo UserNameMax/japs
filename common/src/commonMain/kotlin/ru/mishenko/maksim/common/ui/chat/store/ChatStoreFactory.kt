@@ -24,6 +24,7 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
             executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl,
             bootstrapper = coroutineBootstrapper {
+                dispatch(Action.SetName(messageController.name))
                 launch(Dispatchers.Default) {
                     MessageController.builder.setScope(scope = this)
                     messageController.flow().collect { message ->
@@ -37,11 +38,13 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
 
     sealed interface Action {
         data class EmitMessage(val newMessage: Message) : Action
+        data class SetName(val name: String) : Action
     }
 
     sealed interface UiMessage {
         data class UpdateMessage(val message: String) : UiMessage
         data class UpdateMessageList(val list: List<Message>) : UiMessage
+        data class SetName(val name: String) : UiMessage
     }
 
     private inner class ExecutorImpl :
@@ -54,6 +57,11 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
                     messageController.sendMessage(state.message)
                     dispatch(UiMessage.UpdateMessage(""))
                 }
+
+                is ChatStore.Intent.OnChangeName -> {
+                    messageController.name = intent.name
+                    dispatch(UiMessage.SetName(intent.name))
+                }
             }
         }
 
@@ -63,6 +71,8 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
                     val state = getState()
                     dispatch(UiMessage.UpdateMessageList(list = state.messageHistory.filter { it.id != action.newMessage.id } + action.newMessage))
                 }
+
+                is Action.SetName -> dispatch(UiMessage.SetName(action.name))
             }
         }
     }
@@ -72,6 +82,7 @@ class ChatStoreFactory(private val storeFactory: StoreFactory) {
             when (msg) {
                 is UiMessage.UpdateMessage -> copy(message = msg.message)
                 is UiMessage.UpdateMessageList -> copy(messageHistory = msg.list)
+                is UiMessage.SetName -> copy(name = msg.name)
             }
     }
 }
